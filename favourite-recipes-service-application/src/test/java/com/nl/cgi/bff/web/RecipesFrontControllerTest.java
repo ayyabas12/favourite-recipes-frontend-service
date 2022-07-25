@@ -1,8 +1,8 @@
 package com.nl.cgi.bff.web;
 
 import com.nl.cgi.bff.mockdata.MockDataProvider;
-import com.nl.cgi.bff.model.request.IngredientsRequest;
-import com.nl.cgi.bff.service.IngredientsFrontService;
+import com.nl.cgi.bff.model.request.RecipesRequest;
+import com.nl.cgi.bff.service.RecipesFrontService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,79 +12,90 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc()
-public class IngredientsControllerTest {
+public class RecipesFrontControllerTest {
 
-    private static final String URI = "/dish-frontend-service/ingredient";
+    private static final String URI = "/dish-frontend-service/recipes?id=1";
+    private static final String DELETE_URI = "/dish-frontend-service/recipes?id=1";
     private static final String X_AUTH_USER = "X-AUTH-USER";
     String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsd2lsbGlhbXMxNiIsInJvbGVzIjoidXNlciIsImlhdCI6MTUxNDQ0OTgzM30.WKMQ_oPPiDcc6sGtMJ1Y9hlrAAc6U3xQLuEHyAnM1FU";
 
     @Mock
-    IngredientsFrontService ingredientsFrontService;
+    RecipesFrontService dishesFrontService;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     public void setup() {
-        IngredientsController controller = new  IngredientsController(ingredientsFrontService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+        RecipesFrontController stateController = new RecipesFrontController(dishesFrontService);
+        mockMvc = MockMvcBuilders.standaloneSetup(stateController)
                 .build();
 
     }
 
     @Nested
-    @DisplayName("Ingredients all service all scenario")
-    class TestGetIngredientsAndSaveRecipesDetails {
+    @DisplayName("dishes all service all scenario")
+    class TestGetAndSaveDishesDetails {
         @Test
-        void testGetIngredientsDetails() throws Exception {
-            when(ingredientsFrontService.getIngredientsDetails(anyLong())).thenReturn(MockDataProvider.getIngredientsDetails());
+        void testGetDishesDetails() throws Exception {
+            when(dishesFrontService.getRecipesDetails(anyLong())).thenReturn(MockDataProvider.getDishesDetails());
             mockMvc
-                    .perform(MockMvcRequestBuilders.get(URI+"/?id=1")
+                    .perform(MockMvcRequestBuilders.get(URI)
                             //.header(X_AUTH_USER, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk());
-            verify(ingredientsFrontService, times(1)).getIngredientsDetails(anyLong());
+            verify(dishesFrontService, times(1)).getRecipesDetails(anyLong());
         }
 
         @Test
-        void testSaveIngredientsDetails() throws Exception {
-            when(ingredientsFrontService.saveIngredientsDetails(any(IngredientsRequest.class))).thenReturn(MockDataProvider.getIngredientsDetails());
+        void testSaveDishesDetails() throws Exception {
+            when(dishesFrontService.saveRecipesDetails(any(RecipesRequest.class))).thenReturn(MockDataProvider.getDishesDetails());
             mockMvc
                     .perform(MockMvcRequestBuilders.post(URI)
-                            .content(MockDataProvider.getIngredientsSaveRequest().toString())
+                            .content(MockDataProvider.getDishesSaveRequest().toString())
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk());
-            verify(ingredientsFrontService, times(1)).saveIngredientsDetails(any(IngredientsRequest.class));
+            verify(dishesFrontService, times(1)).saveRecipesDetails(any(RecipesRequest.class));
         }
 
 
         @Test
-        void testUpdateIngredientsDetails() throws Exception {
-            when(ingredientsFrontService.saveIngredientsDetails(any(IngredientsRequest.class))).thenReturn(MockDataProvider.getIngredientsDetails());
+        void testUpdateDishesDetails() throws Exception {
+            when(dishesFrontService.saveRecipesDetails(any(RecipesRequest.class))).thenReturn(MockDataProvider.getDishesDetails());
             mockMvc
                     .perform(MockMvcRequestBuilders.post(URI)
-                            .content(MockDataProvider.getIngredientsUpdateRequest().toString())
+                            .content(MockDataProvider.getDishesUpdateRequest().toString())
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk());
-            verify(ingredientsFrontService, times(1)).saveIngredientsDetails(any(IngredientsRequest.class));
+            verify(dishesFrontService, times(1)).saveRecipesDetails(any(RecipesRequest.class));
         }
 
-
+        @Test
+        void testDeleteDishesDetails() throws Exception {
+            when(dishesFrontService.deleteRecipesDetails(any(Long.class))).thenReturn(true);
+            mockMvc
+                    .perform(MockMvcRequestBuilders.delete(DELETE_URI)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+            verify(dishesFrontService, times(1)).deleteRecipesDetails(any(Long.class));
+        }
     }
 
     @Nested
-    @DisplayName("Get Ingredients details - Service Exceptions")
-    class GetAndSaveIngredientsServiceExceptions {
+    @DisplayName("Get dishes details - Service Exceptions")
+    class GetAndSaveDishServiceExceptions {
         @Test
         void checkExceptionThrownWhenRequestIsNull() throws Exception {
             mockMvc
@@ -94,12 +105,10 @@ public class IngredientsControllerTest {
         }
 
 
-
         @Test
-        void checkSaveExceptionThrownWhenIngredientsNameIsNull() throws Exception {
+        void checkSaveExceptionThrownWhenDishesNameIsNull() throws Exception {
             mockMvc
                     .perform(MockMvcRequestBuilders.post(URI)
-                            .header(X_AUTH_USER, "Bearer " + token)
                             .content(MockDataProvider.getInvalidServiceRequest().toString())
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().is4xxClientError());

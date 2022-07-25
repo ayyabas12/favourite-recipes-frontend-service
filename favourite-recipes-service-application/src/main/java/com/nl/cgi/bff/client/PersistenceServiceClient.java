@@ -2,8 +2,11 @@ package com.nl.cgi.bff.client;
 
 import com.nl.cgi.bff.exception.ExceptionUtil;
 import com.nl.cgi.bff.exception.ServiceException;
-import com.nl.cgi.bff.model.request.*;
-import com.nl.cgi.bff.model.response.*;
+import com.nl.cgi.bff.model.request.RecipesRequest;
+import com.nl.cgi.bff.model.request.IngredientsRequest;
+import com.nl.cgi.bff.model.response.IngredientsResponse;
+import com.nl.cgi.bff.model.response.RecipesResponse;
+import com.nl.cgi.bff.model.response.SearchRecipesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,83 +23,108 @@ public class PersistenceServiceClient {
     private final WebClient persistenceWebClient;
 
 
-
     /**
-     * @param requestUrl
-     * @return
+     *
+     * @param id recipes Id
+     * @param requestUrl get the recipes details
+     * @return RecipesResponse
      */
-    public DishesResponse getDishDetails(String requestUrl) {
+    public RecipesResponse getRecipesDetails(long id, String requestUrl) {
         return persistenceWebClient
                 .get()
-                .uri(uriBuilder -> uriBuilder.path(requestUrl).build())
+                .uri(uriBuilder -> uriBuilder.path(requestUrl).queryParam("id", id).build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get dishes details call")))
-                .bodyToMono(DishesResponse.class)
-                .flatMap(recipesResponse -> ExceptionUtil.validateGetDishesResponseResponse(recipesResponse))
+                .bodyToMono(RecipesResponse.class)
+                .flatMap(recipesResponse -> ExceptionUtil.validateRecipesResponse(recipesResponse))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
                 .block();
     }
 
     /**
-     * @param dishRequest
-     * @param requestUrl
-     * @return
+     * @param recipesRequest request
+     * @param requestUrl ps url
+     * @return recipes response
      */
-    public boolean saveOrUpdateDishDetails(DishRequest dishRequest, String requestUrl) {
+    public RecipesResponse saveRecipesDetails(RecipesRequest recipesRequest, String requestUrl) {
         return persistenceWebClient
-                .put()
+                .post()
                 .uri(uriBuilder -> uriBuilder.path(requestUrl).build())
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(dishRequest)
+                .bodyValue(recipesRequest)
                 .retrieve()
                 .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during save dish details call")))
-                .bodyToMono(Boolean.class)
-                .flatMap(response -> ExceptionUtil.validateResponse(response))
-                .doOnError(ExceptionUtil::handleGenericWebClientException)
-                .block();
-    }
-
-
-    public Boolean deleteDishDetails(Long dishId, String requestUrl) {
-        return persistenceWebClient
-                .delete()
-                .uri(uriBuilder -> uriBuilder.path(requestUrl).queryParam("dishId", dishId).build())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get recipes details call")))
-                .bodyToMono(Boolean.class)
-                .flatMap(response -> ExceptionUtil.validateResponse(response))
-                .doOnError(ExceptionUtil::handleGenericWebClientException)
-                .block();
-    }
-
-
-
-    /**
-     * @param requestUrl
-     * @return
-     */
-    public IngredientsResponse getIngredientsDetails(String requestUrl) {
-        return persistenceWebClient
-                .get()
-                .uri(uriBuilder -> uriBuilder.path(requestUrl).build())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get recipes details call")))
-                .bodyToMono(IngredientsResponse.class)
-                .flatMap(recipesResponse -> ExceptionUtil.validateGetDishesResponseResponse(recipesResponse))
+                .bodyToMono(RecipesResponse.class)
+                .flatMap(response -> ExceptionUtil.validateRecipesResponse(response))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
                 .block();
     }
 
     /**
      *
+     * @param id
+     * @param recipesRequest
+     * @param requestUrl
+     * @return
+     */
+    public RecipesResponse updateRecipesDetails(long id, RecipesRequest recipesRequest, String requestUrl) {
+        return persistenceWebClient
+                .put()
+                .uri(uriBuilder -> uriBuilder.path(requestUrl + id).build())
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(recipesRequest)
+                .retrieve()
+                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during save dish details call")))
+                .bodyToMono(RecipesResponse.class)
+                .flatMap(response -> ExceptionUtil.validateRecipesResponse(response))
+                .doOnError(ExceptionUtil::handleGenericWebClientException)
+                .block();
+    }
+
+    /**
+     *
+     * @param id
+     * @param requestUrl
+     * @return
+     */
+    public Boolean deleteRecipeDetails(Long id, String requestUrl) {
+        return persistenceWebClient
+                .delete()
+                .uri(uriBuilder -> uriBuilder.path(requestUrl).queryParam("id", id).build())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get recipes details call")))
+                .bodyToMono(Boolean.class)
+                .flatMap(response -> ExceptionUtil.validateResponse(response, "dish details is not deleted"))
+                .doOnError(ExceptionUtil::handleGenericWebClientException)
+                .block();
+    }
+
+
+    /**
+     * @param requestUrl
+     * @return
+     */
+    public IngredientsResponse getIngredientsDetails(final long id, final String requestUrl) {
+        return persistenceWebClient
+                .get()
+                .uri(uriBuilder -> uriBuilder.path(requestUrl).queryParam("id", id).build())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get recipes details call")))
+                .bodyToMono(IngredientsResponse.class)
+                .flatMap(recipesResponse -> ExceptionUtil.validateIngredientsResponse(recipesResponse))
+                .doOnError(ExceptionUtil::handleGenericWebClientException)
+                .block();
+    }
+
+    /**
      * @param ingredientsRequest
      * @param requestUrl
      * @return
      */
-    public boolean saveOrUpdateIngredientsDetails(IngredientsRequest ingredientsRequest, String requestUrl) {
+    public IngredientsResponse saveIngredientsDetails(IngredientsRequest ingredientsRequest, String requestUrl) {
         return persistenceWebClient
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(requestUrl).build())
@@ -104,75 +132,64 @@ public class PersistenceServiceClient {
                 .bodyValue(ingredientsRequest)
                 .retrieve()
                 .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during save ingredients details call")))
-                .bodyToMono(Boolean.class)
-                .flatMap(response -> ExceptionUtil.validateResponse(response))
+                .bodyToMono(IngredientsResponse.class)
+                .flatMap(response -> ExceptionUtil.validateIngredientsResponse(response))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
                 .block();
     }
 
-
-
-
-
     /**
+     * @param ingredientsRequest
      * @param requestUrl
      * @return
      */
-    public Response getFoodRecipesDetails(String requestUrl) {
-        return persistenceWebClient
-                .get()
-                .uri(uriBuilder -> uriBuilder.path(requestUrl).build())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get recipes details call")))
-                .bodyToMono(Response.class)
-                .flatMap(recipesResponse -> ExceptionUtil.validateGetFoodRecipeResponseResponse(recipesResponse))
-                .doOnError(ExceptionUtil::handleGenericWebClientException)
-                .block();
-    }
-
-
-
-
-    /**
-     * @param recipesRequest
-     * @param requestUrl
-     * @return
-     */
-    public boolean saveOrUpdateFoodRecipesDetails(FavouriteFoodRecipesRequest recipesRequest, String requestUrl) {
+    public IngredientsResponse updateIngredientsDetails(final long id, IngredientsRequest ingredientsRequest, String requestUrl) {
         return persistenceWebClient
                 .put()
-                .uri(uriBuilder -> uriBuilder.path(requestUrl).build())
+                .uri(uriBuilder -> uriBuilder.path(requestUrl + id).build())
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(recipesRequest)
+                .bodyValue(ingredientsRequest)
                 .retrieve()
-                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during save FoodRecipes details call")))
-                .bodyToMono(Boolean.class)
-                .flatMap(response -> ExceptionUtil.validateResponse(response))
+                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during save ingredients details call")))
+                .bodyToMono(IngredientsResponse.class)
+                .flatMap(response -> ExceptionUtil.validateIngredientsResponse(response))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
                 .block();
     }
 
+
+
+
     /**
-     * @param dishRequest
+     * @param category
+     * @param quantity
+     * @param instructions
      * @param requestUrl
      * @return
      */
-    public Response searchFoodRecipesDetails(DishSearchRequest dishRequest, String requestUrl) {
+    public SearchRecipesResponse searchFoodRecipesDetails(String category, long quantity, String instructions, String requestUrl) {
         return persistenceWebClient
-                .post()
-                .uri(uriBuilder -> uriBuilder.path(requestUrl).build())
+                .get()
+                .uri(uriBuilder -> uriBuilder.path(requestUrl)
+                        .queryParam("category", category)
+                        .queryParam("quantity", quantity)
+                        .queryParam("instructions", instructions)
+                        .build())
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(dishRequest)
                 .retrieve()
                 .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during search FoodRecipesDetails call")))
-                .bodyToMono(Response.class)
+                .bodyToMono(SearchRecipesResponse.class)
                 .flatMap(response -> ExceptionUtil.validateGetFoodRecipeResponseResponse(response))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
                 .block();
     }
 
-
+    /**
+     *
+     * @param id
+     * @param requestUrl
+     * @return
+     */
 
     public Boolean deleteFoodRecipesDetails(Long id, String requestUrl) {
         return persistenceWebClient
@@ -182,28 +199,8 @@ public class PersistenceServiceClient {
                 .retrieve()
                 .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get recipes details call")))
                 .bodyToMono(Boolean.class)
-                .flatMap(response -> ExceptionUtil.validateResponse(response))
+                .flatMap(response -> ExceptionUtil.validateResponse(response, "recipes is not deleted"))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
                 .block();
     }
-
-    /**
-     * @param requestUrl
-     * @return
-     */
-    public Response getFoodRecipesDetailsFilterByInstructions(String instructions, String requestUrl) {
-        return persistenceWebClient
-                .get()
-                .uri(uriBuilder -> uriBuilder.path(requestUrl).queryParam("searchString", instructions).build())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get recipes details call")))
-                .bodyToMono(Response.class)
-                .flatMap(recipesResponse -> ExceptionUtil.validateGetFoodRecipeResponseResponse(recipesResponse))
-                .doOnError(ExceptionUtil::handleGenericWebClientException)
-                .block();
-    }
-
-
-
 }

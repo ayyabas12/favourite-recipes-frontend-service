@@ -16,10 +16,12 @@ import java.io.Serializable;
 @Builder
 public class IngredientsRequest implements Serializable {
     @JsonProperty(value = "ingredientName")
-    @ApiModelProperty(required = true,notes = "ingredientsName of the dishes" )
+    @ApiModelProperty(required = true, notes = "ingredientsName of the dishes")
     @NotBlank(message = "ingredientsName cannot be null")
     private String ingredientName;
-    private String ingredientId;
+
     @NotBlank
+    @ApiModelProperty(required = true, notes = "imageURL of the dishes")
+    @NotBlank(message = "imageURL cannot be null")
     private String imageURL;
 }

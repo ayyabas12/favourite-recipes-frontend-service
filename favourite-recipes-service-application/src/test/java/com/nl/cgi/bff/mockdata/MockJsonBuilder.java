@@ -18,6 +18,10 @@ public class MockJsonBuilder {
         this.jsonObject.addProperty(key, value);
         return this;
     }
+    MockJsonBuilder withProperties(String key, long value) {
+        this.jsonObject.addProperty(key, value);
+        return this;
+    }
     JsonObject build() {
         return this.jsonObject;
     }

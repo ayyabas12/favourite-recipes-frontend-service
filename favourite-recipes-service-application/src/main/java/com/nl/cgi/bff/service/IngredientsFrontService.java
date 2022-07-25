@@ -18,12 +18,16 @@ public class IngredientsFrontService {
     private final PersistenceServiceClient persistenceServiceClient;
     private final PersistenceServiceProperties persistenceServiceProperties;
 
-    public IngredientsResponse getIngredientsDetails() {
-        return persistenceServiceClient.getIngredientsDetails(persistenceServiceProperties.getIngredientsDetailsUrl());
+    public IngredientsResponse getIngredientsDetails(final long id) {
+        return persistenceServiceClient.getIngredientsDetails(id, persistenceServiceProperties.getIngredientsDetailsUrl());
     }
 
-    public boolean saveOrUpdateIngredientsDetails(IngredientsRequest ingredientsRequest) {
-        return persistenceServiceClient.saveOrUpdateIngredientsDetails(ingredientsRequest, persistenceServiceProperties.getIngredientsDetailsUrl());
+    public IngredientsResponse saveIngredientsDetails(final IngredientsRequest ingredientsRequest) {
+        return persistenceServiceClient.saveIngredientsDetails(ingredientsRequest, persistenceServiceProperties.getIngredientsDetailsUrl());
+    }
+
+    public IngredientsResponse updateIngredientsDetails(final long id, final IngredientsRequest ingredientsRequest) {
+        return persistenceServiceClient.updateIngredientsDetails(id, ingredientsRequest, persistenceServiceProperties.getIngredientsDetailsUrl());
     }
 
 }

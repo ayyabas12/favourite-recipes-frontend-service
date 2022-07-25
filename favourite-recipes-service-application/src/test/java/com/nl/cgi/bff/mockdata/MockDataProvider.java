@@ -10,60 +10,49 @@ import java.util.*;
 public class MockDataProvider {
 
 
-    public static DishesResponse getDishesDetails(){
-        var dishes1 = Dishes.builder().dishId(1).dishName("chicken breast curry").category(CuisineCategory.NON_VEGETARIAN).quantity(2).instructions("chicken recipe").build();
-        var dishes2 = Dishes.builder().dishId(2).dishName("tomato soup recipe").category(CuisineCategory.VEGETARIAN).quantity(3).instructions("tomato recipe").build();
-        return DishesResponse.builder().dishesNames(Arrays.asList(dishes1,dishes2)).build();
+    public static RecipesResponse getDishesDetails() {
+        var dishes1 = Recipes.builder().recipeId(1).recipeName("chicken breast curry").category(CuisineCategory.NON_VEGETARIAN).quantity(2).instructions("chicken recipe").build();
+        return RecipesResponse.builder().recipes(dishes1).build();
     }
 
     public static JsonObject getDishesSaveRequest() {
         return MockJsonBuilder.aRequest()
-                .withProperty("dishName", "chicken breast")
+                .withProperty("recipeName", "chicken breast")
                 .withProperty("quantity", "2")
                 .withProperty("instructions", "chicken breast make ")
                 .withProperty("category", CuisineCategory.NON_VEGETARIAN.name())
                 .build();
     }
+
     public static JsonObject getDishesUpdateRequest() {
         return MockJsonBuilder.aRequest()
-                .withProperty("dishId", "1")
-                .withProperty("dishName", "chicken breast")
+                .withProperty("recipeId", "1")
+                .withProperty("recipeName", "chicken breast")
                 .withProperty("quantity", "2")
                 .withProperty("instructions", "chicken breast make ")
                 .withProperty("category", CuisineCategory.NON_VEGETARIAN.name())
                 .build();
     }
+
     public static JsonObject getInvalidServiceRequest() {
         return MockJsonBuilder.aRequest()
                 .build();
     }
 
 
-    public static DishRequest getDishesServiceRequest() {
-        return DishRequest.builder().dishId(1).build();
+    public static RecipesRequest getDishesServiceRequest() {
+        return RecipesRequest.builder().recipeId(1).build();
     }
 
 
     public static IngredientsResponse getIngredientsDetails() {
-        var ingredient1 = Ingredients.builder().ingredientId(1).ingredientName("chicken").build();
-        var ingredient2 = Ingredients.builder().ingredientId(2).ingredientName("tomoto").build();
-        return IngredientsResponse.builder().ingredients(Arrays.asList(ingredient1, ingredient2)).build();
+        var ingredient1 = Ingredients.builder().ingredientsId(1).ingredientName("chicken").build();
+        return IngredientsResponse.builder().ingredients(ingredient1).build();
     }
 
-    public static FavouriteFoodRecipesResponse getFoodRecipesDetails() {
-        var dishes1 = Dishes.builder().dishId(1).dishName("chicken breast curry").category(CuisineCategory.NON_VEGETARIAN).quantity(2).instructions("chicken recipe").build();
-        Map<Dishes, List<Ingredients>> foodRecipeDetails= new HashMap<>();
-        foodRecipeDetails.put(dishes1, getIngredientsDetails().getIngredients());
-        return FavouriteFoodRecipesResponse.builder().foodRecipeDetails(foodRecipeDetails).build();
-    }
-    public static Response getSearchFoodRecipesDetails(){
-        var dishes = Dishes.builder().dishId(1).dishName("chicken breast curry").category(CuisineCategory.NON_VEGETARIAN).quantity(2).instructions("chicken recipe").build();
-        var ingredient = Ingredients.builder().ingredientId(2).ingredientName("tomoto").build();
-        List<FavouriteFoodRecipeDetails> foodRecipeDetails =new ArrayList<>();
-        foodRecipeDetails.add(FavouriteFoodRecipeDetails.builder().id(1).dishes(dishes).ingredients(ingredient).build());
-        return Response.builder().foodRecipeDetails(foodRecipeDetails).build();
 
-    }
+
+
 
     public static JsonObject getIngredientsSaveRequest() {
         return MockJsonBuilder.aRequest()
@@ -71,6 +60,7 @@ public class MockDataProvider {
                 .withProperty("imageURL", "chicken.png")
                 .build();
     }
+
     public static JsonObject getIngredientsUpdateRequest() {
         return MockJsonBuilder.aRequest()
                 .withProperty("ingredientId", "1")
@@ -82,14 +72,15 @@ public class MockDataProvider {
 
     public static JsonObject getFoodRecipesSaveRequest() {
         return MockJsonBuilder.aRequest()
-                .withProperty("dishId", "1")
+                .withProperty("recipe", "1")
                 .withProperty("ingredientId", "1")
                 .build();
     }
+
     public static JsonObject getFoodRecipesUpdateRequest() {
         return MockJsonBuilder.aRequest()
                 .withProperty("ingredientId", "1")
-                .withProperty("dishId", "1")
+                .withProperty("recipe", "1")
                 .withProperty("id", "1")
                 .build();
     }
@@ -102,17 +93,17 @@ public class MockDataProvider {
                 .build();
     }
 
-    public static DishRequest getDishServiceRequest() {
-        return DishRequest.builder()
-                 .dishName("Chicken")
+    public static RecipesRequest getDishServiceRequest() {
+        return RecipesRequest.builder()
+                .recipeName("Chicken")
                 .category(CuisineCategory.NON_VEGETARIAN)
                 .quantity(2)
                 .instructions("instructions")
                 .build();
     }
 
-    public static DishRequest getInvalidDishesServiceRequest() {
-        return DishRequest.builder().build();
+    public static RecipesRequest getInvalidDishesServiceRequest() {
+        return RecipesRequest.builder().build();
     }
 
 
@@ -126,19 +117,6 @@ public class MockDataProvider {
     public static IngredientsRequest getInvalidIngredientsServiceRequest() {
         return IngredientsRequest.builder()
                 .imageURL("imageURL")
-                .build();
-    }
-
-    public static FavouriteFoodRecipesRequest getFavouriteFoodRecipesServiceRequest() {
-        return FavouriteFoodRecipesRequest.builder()
-                .dishId(1L)
-                .ingredientId(1L)
-                .build();
-    }
-
-    public static FavouriteFoodRecipesRequest getInvalidFavouriteFoodRecipesServiceRequest() {
-        return FavouriteFoodRecipesRequest.builder()
-                .dishId(1L)
                 .build();
     }
 }

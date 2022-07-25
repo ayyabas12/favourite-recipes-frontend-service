@@ -7,9 +7,9 @@ logging:
 persistence:
   service:
     baseUrl: http://localhost:7001/
-    dishesDetailsUrl: dishes-persistence-service/recipes-details
-    ingredientsDetailsUrl: ingredients-persistence-service/ingredients-details
-    foodRecipesDetailsUrl: food-persistence-service/food-recipes-details
+    recipesDetailsUrl: dishes-persistence-service/recipes/
+    searchRecipesUrl: dishes-persistence-service/recipes/search
+    ingredientsDetailsUrl: ingredients-persistence-service/ingredients-details/
     memorySizeInMb: 256
     readTimeOut: 120000
     writeTimeOut: 120000

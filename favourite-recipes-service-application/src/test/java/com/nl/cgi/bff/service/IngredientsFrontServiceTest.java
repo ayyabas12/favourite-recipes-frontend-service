@@ -38,40 +38,40 @@ public class IngredientsFrontServiceTest {
 
         @Test
         void testGetIngredientsDetails() {
-            when(persistenceServiceClient.getIngredientsDetails(any())).thenReturn(MockDataProvider.getIngredientsDetails());
-            IngredientsResponse IngredientsDetails = ingredientsFrontService.getIngredientsDetails();
+            when(persistenceServiceClient.getIngredientsDetails(anyLong(),any())).thenReturn(MockDataProvider.getIngredientsDetails());
+            IngredientsResponse IngredientsDetails = ingredientsFrontService.getIngredientsDetails(1);
             assertNotNull(IngredientsDetails);
-            assertEquals(1, IngredientsDetails.getIngredients().get(0).getIngredientId());
-            assertEquals("chicken", IngredientsDetails.getIngredients().get(0).getIngredientName());
-            verify(persistenceServiceClient, times(1)).getIngredientsDetails(any());
+            assertEquals(1, IngredientsDetails.getIngredients().getIngredientsId());
+            assertEquals("chicken", IngredientsDetails.getIngredients().getIngredientName());
+            verify(persistenceServiceClient, times(1)).getIngredientsDetails(anyLong(),any());
         }
 
 
         @Test
         void testGetIngredientsWhenDetailsISNotFound() {
-            when(persistenceServiceClient.getIngredientsDetails(any())).thenThrow(new ServiceException("Ingredients Details is not Found"));
+            when(persistenceServiceClient.getIngredientsDetails(anyLong(),any())).thenThrow(new ServiceException("Ingredients Details is not Found"));
             ServiceException invalidRequestException = Assertions.<ServiceException>assertThrows(ServiceException.class, () ->
-                    ingredientsFrontService.getIngredientsDetails());
-            verify(persistenceServiceClient, times(1)).getIngredientsDetails(any());
+                    ingredientsFrontService.getIngredientsDetails(2));
+            verify(persistenceServiceClient, times(1)).getIngredientsDetails(anyLong(),any());
             assertEquals("Ingredients Details is not Found", invalidRequestException.getMessage());
         }
 
         @Test
         void testSaveIngredientsDetails() {
-            when(persistenceServiceClient.saveOrUpdateIngredientsDetails(any(IngredientsRequest.class), any())).thenReturn(true);
-            boolean isIngredientsSaved = ingredientsFrontService.saveOrUpdateIngredientsDetails(MockDataProvider.getIngredientsServiceRequest());
-            assertTrue(isIngredientsSaved);
-            verify(persistenceServiceClient, times(1)).saveOrUpdateIngredientsDetails(any(IngredientsRequest.class), any());
+            when(persistenceServiceClient.saveIngredientsDetails(any(IngredientsRequest.class), any())).thenReturn(MockDataProvider.getIngredientsDetails());
+            IngredientsResponse IngredientsDetails = ingredientsFrontService.saveIngredientsDetails(MockDataProvider.getIngredientsServiceRequest());
+            assertNotNull(IngredientsDetails);
+            verify(persistenceServiceClient, times(1)).saveIngredientsDetails(any(IngredientsRequest.class), any());
         }
 
         @Test
         void testGetIngredientsDetailsWhenIngredientsDetailsNull() {
-            when(persistenceServiceClient.saveOrUpdateIngredientsDetails(any(IngredientsRequest.class), any())).thenThrow(new ServiceException("No Ingredients returned from persistence service"));
+            when(persistenceServiceClient.saveIngredientsDetails(any(IngredientsRequest.class), any())).thenThrow(new ServiceException("No Ingredients returned from persistence service"));
             var request = MockDataProvider.getInvalidIngredientsServiceRequest();
             ServiceException invalidRequestException = Assertions.assertThrows(ServiceException.class, () ->
-                    ingredientsFrontService.saveOrUpdateIngredientsDetails(request));
+                    ingredientsFrontService.saveIngredientsDetails(request));
             assertEquals("No Ingredients returned from persistence service", invalidRequestException.getMessage());
-            verify(persistenceServiceClient, times(1)).saveOrUpdateIngredientsDetails(any(IngredientsRequest.class), any());
+            verify(persistenceServiceClient, times(1)).saveIngredientsDetails(any(IngredientsRequest.class), any());
         }
     }
 }

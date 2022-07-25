@@ -7,12 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "persistence.service")
 
 public class PersistenceServiceProperties extends ServiceProperties {
-
-    private String userAuthenticationUrl;
-    private String saveUserDetails;
-    private String dishesDetailsUrl;
+    private String recipesDetailsUrl;
     private String ingredientsDetailsUrl;
-    private String foodRecipesDetailsUrl;
-
-
+    private String searchRecipesUrl;
 }

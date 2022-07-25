@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class IngredientsResponse {
-    List<Ingredients> ingredients;
+    Ingredients ingredients;
 }

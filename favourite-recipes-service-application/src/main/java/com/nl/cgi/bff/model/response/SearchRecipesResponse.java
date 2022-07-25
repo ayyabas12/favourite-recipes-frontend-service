@@ -5,14 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ingredients {
-    private long ingredientsId;
-    private String ingredientName;
-    private String imageurl;
+public class SearchRecipesResponse {
+    private List<Recipes> recipes;
 }
-

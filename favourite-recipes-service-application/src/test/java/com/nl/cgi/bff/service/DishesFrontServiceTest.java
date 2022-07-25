@@ -4,8 +4,8 @@ import com.nl.cgi.bff.client.PersistenceServiceClient;
 import com.nl.cgi.bff.config.properties.PersistenceServiceProperties;
 import com.nl.cgi.bff.exception.ServiceException;
 import com.nl.cgi.bff.mockdata.MockDataProvider;
-import com.nl.cgi.bff.model.request.DishRequest;
-import com.nl.cgi.bff.model.response.DishesResponse;
+import com.nl.cgi.bff.model.request.RecipesRequest;
+import com.nl.cgi.bff.model.response.RecipesResponse;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class DishesFrontServiceTest {
-    DishesFrontService dishesFrontService;
+    RecipesFrontService dishesFrontService;
     @Mock
     PersistenceServiceClient persistenceServiceClient;
     @Mock
@@ -29,7 +29,7 @@ public class DishesFrontServiceTest {
 
     @BeforeEach
     public void setup() {
-        dishesFrontService = new DishesFrontService(persistenceServiceClient, persistenceServiceProperties);
+        dishesFrontService = new RecipesFrontService(persistenceServiceClient, persistenceServiceProperties);
     }
 
     @Nested
@@ -38,40 +38,40 @@ public class DishesFrontServiceTest {
 
         @Test
         void testGetDishesDetails() {
-            when(persistenceServiceClient.getDishDetails(any())).thenReturn(MockDataProvider.getDishesDetails());
-            DishesResponse dishesDetails = dishesFrontService.getDishesDetails();
+            when(persistenceServiceClient.getRecipesDetails(anyLong(), any())).thenReturn(MockDataProvider.getDishesDetails());
+            RecipesResponse dishesDetails = dishesFrontService.getRecipesDetails(1);
             assertNotNull(dishesDetails);
-            assertEquals(1, dishesDetails.getDishesNames().get(0).getDishId());
-            assertEquals("chicken breast curry", dishesDetails.getDishesNames().get(0).getDishName());
-            verify(persistenceServiceClient, times(1)).getDishDetails(any());
+            assertEquals(1, dishesDetails.getRecipes().getRecipeId());
+            assertEquals("chicken breast curry", dishesDetails.getRecipes().getRecipeName());
+            verify(persistenceServiceClient, times(1)).getRecipesDetails(anyLong(), any());
         }
 
 
         @Test
         void testGetDishesWhenDetailsISNotFound() {
-            when(persistenceServiceClient.getDishDetails(any())).thenThrow(new ServiceException("Dishes Details is not Found"));
+            when(persistenceServiceClient.getRecipesDetails(anyLong(), any())).thenThrow(new ServiceException("Dishes Details is not Found"));
             ServiceException invalidRequestException = Assertions.<ServiceException>assertThrows(ServiceException.class, () ->
-                    dishesFrontService.getDishesDetails());
-            verify(persistenceServiceClient, times(1)).getDishDetails(any());
+                    dishesFrontService.getRecipesDetails(2));
+            verify(persistenceServiceClient, times(1)).getRecipesDetails(anyLong(), any());
             assertEquals("Dishes Details is not Found", invalidRequestException.getMessage());
         }
 
         @Test
         void testSaveDishesDetails() {
-            when(persistenceServiceClient.saveOrUpdateDishDetails(any(DishRequest.class), any())).thenReturn(true);
-            boolean isDishesSaved = dishesFrontService.saveOrUpdateDishesDetails(MockDataProvider.getDishServiceRequest());
-            assertTrue(isDishesSaved);
-            verify(persistenceServiceClient, times(1)).saveOrUpdateDishDetails(any(DishRequest.class), any());
+            when(persistenceServiceClient.saveRecipesDetails(any(RecipesRequest.class), any())).thenReturn(MockDataProvider.getDishesDetails());
+            RecipesResponse dishesResponse = dishesFrontService.saveRecipesDetails(MockDataProvider.getDishServiceRequest());
+            assertNotNull(dishesResponse);
+            verify(persistenceServiceClient, times(1)).saveRecipesDetails(any(RecipesRequest.class), any());
         }
 
         @Test
         void testGetDishesDetailsWhenDishesDetailsNull() {
-            when(persistenceServiceClient.saveOrUpdateDishDetails(any(DishRequest.class), any())).thenThrow(new ServiceException("No Dishes returned from persistence service"));
+            when(persistenceServiceClient.saveRecipesDetails(any(RecipesRequest.class), any())).thenThrow(new ServiceException("No Dishes returned from persistence service"));
             var request = MockDataProvider.getInvalidDishesServiceRequest();
             ServiceException invalidRequestException = Assertions.assertThrows(ServiceException.class, () ->
-                    dishesFrontService.saveOrUpdateDishesDetails(request));
+                    dishesFrontService.saveRecipesDetails(request));
             assertEquals("No Dishes returned from persistence service", invalidRequestException.getMessage());
-            verify(persistenceServiceClient, times(1)).saveOrUpdateDishDetails(any(DishRequest.class), any());
+            verify(persistenceServiceClient, times(1)).saveRecipesDetails(any(RecipesRequest.class), any());
         }
     }
 }

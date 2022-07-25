@@ -8,7 +8,7 @@ public enum ErrorDetail {
     CLIENT_RESOURCE_NOT_FOUND_EXCEPTION("LMFS404", "Resource Not Available", HttpStatus.INTERNAL_SERVER_ERROR),
     CLIENT_BAD_REQUEST_EXCEPTION("LMFS500", "Bad Request error from service", HttpStatus.INTERNAL_SERVER_ERROR),
     CLIENT_FORBIDDEN_EXCEPTION("LMFS500", "The user is not permitted to perform the requested operation", HttpStatus.INTERNAL_SERVER_ERROR),
-    CLIENT_DETAILS_NOT_FOUND("LMFS500", "dishes details is not found", HttpStatus.INTERNAL_SERVER_ERROR);
+    CLIENT_DETAILS_NOT_FOUND("LMFS500", "recipes details is not found", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String errorCode;
     private final String errorMessage;

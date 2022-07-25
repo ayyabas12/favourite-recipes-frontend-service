@@ -35,25 +35,26 @@ public class ExceptionUtil {
         return Mono.error(exception);
     }
 
-    public static Mono<Boolean> validateResponse(boolean response) {
+    public static Mono<Boolean> validateResponse(boolean response , String message) {
         if (!response) {
-            log.info("Details updated/Added Successfully");
-            return Mono.error(new ServiceException(ErrorDetail.INTERNAL_SERVER_ERROR, "Details details is not saved"));
+            log.info(message);
+           // return Mono.error(new ServiceException(ErrorDetail.INTERNAL_SERVER_ERROR, "Details details is not saved"));
+            return Mono.just(false);
         }
         log.info("Details updated/Added Successfully");
-        return Mono.just(response);
+        return Mono.just(true);
     }
-    public static Mono<DishesResponse> validateGetDishesResponseResponse(DishesResponse dishesResponse) {
-       if (dishesResponse==null || dishesResponse.getDishesNames().isEmpty()) {
-           log.error("Recipes details is empty");
-           return Mono.error(new ServiceException(ErrorDetail.CLIENT_DETAILS_NOT_FOUND, "No recipes returned from persistence service"));
+    public static Mono<RecipesResponse> validateRecipesResponse(RecipesResponse recipesResponse) {
+       if (recipesResponse==null) {
+           log.error("No recipes returned from persistence service");
+           return Mono.just(recipesResponse);
         }
         log.info("Recipes details return from PS");
-        return Mono.just(dishesResponse);
+        return Mono.just(recipesResponse);
     }
 
-    public static Mono<IngredientsResponse> validateGetDishesResponseResponse(IngredientsResponse ingredientsResponse) {
-        if (ingredientsResponse==null || ingredientsResponse.getIngredients().isEmpty()) {
+    public static Mono<IngredientsResponse> validateIngredientsResponse(IngredientsResponse ingredientsResponse) {
+        if (ingredientsResponse==null) {
             log.error("Ingredients details is empty");
             return Mono.error(new ServiceException(ErrorDetail.CLIENT_DETAILS_NOT_FOUND, "No Ingredients returned from persistence service"));
         }
@@ -61,10 +62,11 @@ public class ExceptionUtil {
         return Mono.just(ingredientsResponse);
     }
 
-    public static Mono<Response> validateGetFoodRecipeResponseResponse(Response foodRecipeDetails) {
-        if (foodRecipeDetails==null || foodRecipeDetails.getFoodRecipeDetails().isEmpty()) {
+    public static Mono<SearchRecipesResponse> validateGetFoodRecipeResponseResponse(SearchRecipesResponse foodRecipeDetails) {
+        if (foodRecipeDetails==null) {
             log.error("Ingredients details is empty");
-            return Mono.error(new ServiceException(ErrorDetail.CLIENT_DETAILS_NOT_FOUND, "No Ingredients returned from persistence service"));
+            //return Mono.error(new ServiceException(ErrorDetail.CLIENT_DETAILS_NOT_FOUND, "No Ingredients returned from persistence service"));
+             return Mono.just(foodRecipeDetails);
         }
         log.info("Ingredients details return from PS");
         return Mono.just(foodRecipeDetails);
