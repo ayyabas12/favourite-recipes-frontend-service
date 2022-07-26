@@ -17,8 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,87 +27,126 @@ import static org.mockito.Mockito.when;
 public class RecipesFrontControllerTest {
 
     private static final String URI = "/dish-frontend-service/recipes?id=1";
+
+    private static final String INVALID_URI = "/dish-frontend-service/recipes";
     private static final String DELETE_URI = "/dish-frontend-service/recipes?id=1";
-    private static final String X_AUTH_USER = "X-AUTH-USER";
-    String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsd2lsbGlhbXMxNiIsInJvbGVzIjoidXNlciIsImlhdCI6MTUxNDQ0OTgzM30.WKMQ_oPPiDcc6sGtMJ1Y9hlrAAc6U3xQLuEHyAnM1FU";
+    private static final String UPDATE_URI = "/dish-frontend-service/recipes/1/ingredients";
+
+    private static final String SEARCH_URL = "/dish-frontend-service/recipes/search?category=\"VEGETARIAN\"&quantity=3&instructions=\"vegetarian\"";
 
     @Mock
-    RecipesFrontService dishesFrontService;
+    RecipesFrontService recipesFrontService;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     public void setup() {
-        RecipesFrontController stateController = new RecipesFrontController(dishesFrontService);
+        RecipesFrontController stateController = new RecipesFrontController(recipesFrontService);
         mockMvc = MockMvcBuilders.standaloneSetup(stateController)
                 .build();
 
     }
 
     @Nested
-    @DisplayName("dishes all service all scenario")
-    class TestGetAndSaveDishesDetails {
+    @DisplayName("Recipes all service all scenario")
+    class TestGetAndSaveRecipesDetails {
         @Test
-        void testGetDishesDetails() throws Exception {
-            when(dishesFrontService.getRecipesDetails(anyLong())).thenReturn(MockDataProvider.getDishesDetails());
+        void testGetRecipesDetails() throws Exception {
+            when(recipesFrontService.getRecipesDetails(anyLong())).thenReturn(MockDataProvider.getRecipesDetails());
             mockMvc
                     .perform(MockMvcRequestBuilders.get(URI)
-                            //.header(X_AUTH_USER, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk());
-            verify(dishesFrontService, times(1)).getRecipesDetails(anyLong());
+            verify(recipesFrontService, times(1)).getRecipesDetails(anyLong());
         }
 
         @Test
-        void testSaveDishesDetails() throws Exception {
-            when(dishesFrontService.saveRecipesDetails(any(RecipesRequest.class))).thenReturn(MockDataProvider.getDishesDetails());
+        void testSaveRecipesDetails() throws Exception {
+            when(recipesFrontService.saveRecipesDetails(any(RecipesRequest.class))).thenReturn(MockDataProvider.getRecipesDetails());
             mockMvc
                     .perform(MockMvcRequestBuilders.post(URI)
-                            .content(MockDataProvider.getDishesSaveRequest().toString())
+                            .content(MockDataProvider.getRecipesSaveRequest().toString())
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk());
-            verify(dishesFrontService, times(1)).saveRecipesDetails(any(RecipesRequest.class));
+            verify(recipesFrontService, times(1)).saveRecipesDetails(any(RecipesRequest.class));
         }
 
 
         @Test
-        void testUpdateDishesDetails() throws Exception {
-            when(dishesFrontService.saveRecipesDetails(any(RecipesRequest.class))).thenReturn(MockDataProvider.getDishesDetails());
+        void testUpdateRecipesDetails() throws Exception {
+            when(recipesFrontService.updateRecipesDetails(anyLong(), any(RecipesRequest.class))).thenReturn(MockDataProvider.getRecipesDetails());
             mockMvc
-                    .perform(MockMvcRequestBuilders.post(URI)
-                            .content(MockDataProvider.getDishesUpdateRequest().toString())
+                    .perform(MockMvcRequestBuilders.put(UPDATE_URI)
+                            .content(MockDataProvider.getRecipesUpdateRequest().toString())
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk());
-            verify(dishesFrontService, times(1)).saveRecipesDetails(any(RecipesRequest.class));
+            verify(recipesFrontService, times(1)).updateRecipesDetails(anyLong(), any(RecipesRequest.class));
         }
 
         @Test
-        void testDeleteDishesDetails() throws Exception {
-            when(dishesFrontService.deleteRecipesDetails(any(Long.class))).thenReturn(true);
+        void testDeleteRecipesDetails() throws Exception {
+            when(recipesFrontService.deleteRecipesDetails(any(Long.class))).thenReturn(true);
             mockMvc
                     .perform(MockMvcRequestBuilders.delete(DELETE_URI)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk());
-            verify(dishesFrontService, times(1)).deleteRecipesDetails(any(Long.class));
+            verify(recipesFrontService, times(1)).deleteRecipesDetails(any(Long.class));
+        }
+
+        @Test
+        void testSearchRecipesDetails() throws Exception {
+            when(recipesFrontService.searchFoodRecipeDetails(anyString(), anyLong(), anyString())).thenReturn(MockDataProvider.getRecipesDetailsByFilter());
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get(SEARCH_URL)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+            verify(recipesFrontService, times(1)).searchFoodRecipeDetails(anyString(), anyLong(), anyString());
         }
     }
 
     @Nested
-    @DisplayName("Get dishes details - Service Exceptions")
+    @DisplayName("Get Recipes details - Service Exceptions")
     class GetAndSaveDishServiceExceptions {
         @Test
         void checkExceptionThrownWhenRequestIsNull() throws Exception {
             mockMvc
-                    .perform(MockMvcRequestBuilders.post(URI)
+                    .perform(MockMvcRequestBuilders.get(INVALID_URI)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().is4xxClientError());
         }
 
 
         @Test
-        void checkSaveExceptionThrownWhenDishesNameIsNull() throws Exception {
+        void checkSaveExceptionThrownWhenRequestNull() throws Exception {
             mockMvc
                     .perform(MockMvcRequestBuilders.post(URI)
+                            .content(MockDataProvider.getInvalidServiceRequest().toString())
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+        }
+
+        @Test
+        void checkUpdateExceptionThrownWhenRequestNull() throws Exception {
+            mockMvc
+                    .perform(MockMvcRequestBuilders.put(UPDATE_URI)
+                            .content(MockDataProvider.getInvalidServiceRequest().toString())
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+        }
+
+        @Test
+        void checkSearchExceptionThrownWhenRequestNull() throws Exception {
+            mockMvc
+                    .perform(MockMvcRequestBuilders.put(SEARCH_URL)
+                            .content(MockDataProvider.getInvalidServiceRequest().toString())
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+        }
+
+        @Test
+        void checkDeleteExceptionThrownWhenRequestNull() throws Exception {
+            mockMvc
+                    .perform(MockMvcRequestBuilders.put(SEARCH_URL)
                             .content(MockDataProvider.getInvalidServiceRequest().toString())
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().is4xxClientError());

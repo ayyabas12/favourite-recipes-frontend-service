@@ -1,5 +1,7 @@
 package com.nl.cgi.bff.web;
 
+import com.nl.cgi.bff.exception.ErrorDetail;
+import com.nl.cgi.bff.exception.ServiceException;
 import com.nl.cgi.bff.mockdata.MockDataProvider;
 import com.nl.cgi.bff.model.request.IngredientsRequest;
 import com.nl.cgi.bff.service.IngredientsFrontService;
@@ -26,9 +28,7 @@ import static org.mockito.Mockito.*;
 public class IngredientsControllerTest {
 
     private static final String URI = "/dish-frontend-service/ingredient";
-    private static final String X_AUTH_USER = "X-AUTH-USER";
-    String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsd2lsbGlhbXMxNiIsInJvbGVzIjoidXNlciIsImlhdCI6MTUxNDQ0OTgzM30.WKMQ_oPPiDcc6sGtMJ1Y9hlrAAc6U3xQLuEHyAnM1FU";
-
+    private static final String UPDATE_URI = "/dish-frontend-service/ingredient/1";
     @Mock
     IngredientsFrontService ingredientsFrontService;
 
@@ -36,7 +36,7 @@ public class IngredientsControllerTest {
 
     @BeforeEach
     public void setup() {
-        IngredientsController controller = new  IngredientsController(ingredientsFrontService);
+        IngredientsController controller = new IngredientsController(ingredientsFrontService);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .build();
 
@@ -49,8 +49,7 @@ public class IngredientsControllerTest {
         void testGetIngredientsDetails() throws Exception {
             when(ingredientsFrontService.getIngredientsDetails(anyLong())).thenReturn(MockDataProvider.getIngredientsDetails());
             mockMvc
-                    .perform(MockMvcRequestBuilders.get(URI+"/?id=1")
-                            //.header(X_AUTH_USER, "Bearer " + token)
+                    .perform(MockMvcRequestBuilders.get(URI + "/?id=1")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk());
             verify(ingredientsFrontService, times(1)).getIngredientsDetails(anyLong());
@@ -70,13 +69,13 @@ public class IngredientsControllerTest {
 
         @Test
         void testUpdateIngredientsDetails() throws Exception {
-            when(ingredientsFrontService.saveIngredientsDetails(any(IngredientsRequest.class))).thenReturn(MockDataProvider.getIngredientsDetails());
+            when(ingredientsFrontService.updateIngredientsDetails(anyLong(), any(IngredientsRequest.class))).thenReturn(MockDataProvider.getIngredientsDetails());
             mockMvc
-                    .perform(MockMvcRequestBuilders.post(URI)
+                    .perform(MockMvcRequestBuilders.put(UPDATE_URI)
                             .content(MockDataProvider.getIngredientsUpdateRequest().toString())
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk());
-            verify(ingredientsFrontService, times(1)).saveIngredientsDetails(any(IngredientsRequest.class));
+            verify(ingredientsFrontService, times(1)).updateIngredientsDetails(anyLong(), any(IngredientsRequest.class));
         }
 
 
@@ -86,23 +85,31 @@ public class IngredientsControllerTest {
     @DisplayName("Get Ingredients details - Service Exceptions")
     class GetAndSaveIngredientsServiceExceptions {
         @Test
-        void checkExceptionThrownWhenRequestIsNull() throws Exception {
+        void checkExceptionThrownWhenRequestIsNullGETIngredients() throws Exception {
             mockMvc
-                    .perform(MockMvcRequestBuilders.post(URI)
+                    .perform(MockMvcRequestBuilders.get(URI)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().is4xxClientError());
         }
-
 
 
         @Test
         void checkSaveExceptionThrownWhenIngredientsNameIsNull() throws Exception {
             mockMvc
                     .perform(MockMvcRequestBuilders.post(URI)
-                            .header(X_AUTH_USER, "Bearer " + token)
                             .content(MockDataProvider.getInvalidServiceRequest().toString())
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().is4xxClientError());
         }
+
+        @Test
+        void checkUpdateExceptionThrownWhenIngredientsRequestIsNull() throws Exception {
+            mockMvc
+                    .perform(MockMvcRequestBuilders.put(UPDATE_URI)
+                            .content(MockDataProvider.getInvalidServiceRequest().toString())
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+        }
+
     }
 }

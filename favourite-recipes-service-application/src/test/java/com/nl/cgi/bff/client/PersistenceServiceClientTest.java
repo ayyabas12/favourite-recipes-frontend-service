@@ -5,7 +5,6 @@ import com.nl.cgi.bff.exception.ExceptionResponse;
 import com.nl.cgi.bff.exception.ServiceException;
 import com.nl.cgi.bff.mockdata.MockDataProvider;
 import com.nl.cgi.bff.mockdata.StubServerConfig;
-import com.nl.cgi.bff.model.response.RecipesResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +47,7 @@ class PersistenceServiceClientTest extends StubServerConfig {
    @Test
         void testSaveBadRequestException() throws JsonProcessingException {
             mockServerWithResponse(new ErrorResponseBuilder<ExceptionResponse>().mockErrorResponseFor(PS_BAD_REQUEST, 400));
-            var request = MockDataProvider.getInvalidDishesServiceRequest();
+            var request = MockDataProvider.getInvalidRecipesServiceRequest();
             ServiceException exception = Assertions.assertThrows(ServiceException.class, () ->
                     persistenceServiceClient.saveRecipesDetails(request, "url")
             );
@@ -60,7 +59,7 @@ class PersistenceServiceClientTest extends StubServerConfig {
         @Test
         void testSaveInternalServerException() throws JsonProcessingException {
             mockServerWithResponse(new ErrorResponseBuilder<ExceptionResponse>().mockErrorResponseFor(PS_SERVER_ERROR, 500));
-            var request = MockDataProvider.getInvalidDishesServiceRequest();
+            var request = MockDataProvider.getInvalidRecipesServiceRequest();
             ServiceException exception = Assertions.assertThrows(ServiceException.class, () ->
                     persistenceServiceClient.saveRecipesDetails(request, "url")
             );
