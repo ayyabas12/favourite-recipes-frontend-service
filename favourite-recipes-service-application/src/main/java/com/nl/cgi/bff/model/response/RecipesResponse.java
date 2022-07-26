@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class RecipesResponse {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Recipes recipes;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String message;

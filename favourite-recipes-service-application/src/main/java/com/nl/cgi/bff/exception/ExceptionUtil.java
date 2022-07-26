@@ -47,23 +47,27 @@ public class ExceptionUtil {
     }
 
     public static Mono<RecipesResponse> validateRecipesResponse(RecipesResponse recipesResponse) {
-        if (recipesResponse == null) {
+        if (recipesResponse != null && recipesResponse.getRecipes()!=null) {
+            log.info("Recipes details return from PS");
+        } else {
+            recipesResponse.setMessage("Recipes details is empty");
+            recipesResponse.setErrorCode(ErrorDetail.DATA_DETAILS_NOT_FOUND.getErrorCode());
             log.error("No recipes returned from persistence service");
-            return Mono.just(recipesResponse);
         }
-        log.info("Recipes details return from PS");
         return Mono.just(recipesResponse);
     }
 
     public static Mono<IngredientsResponse> validateIngredientsResponse(IngredientsResponse ingredientsResponse) {
-        if (ingredientsResponse == null) {
-            log.error("Ingredients details is empty");
+        if (ingredientsResponse != null && ingredientsResponse.getIngredients() != null) {
+            log.info("Ingredients details return from PS");
+
+        } else {
             ingredientsResponse.setMessage("Ingredients details is empty");
             ingredientsResponse.setErrorCode(ErrorDetail.DATA_DETAILS_NOT_FOUND.getErrorCode());
-            return Mono.just(ingredientsResponse);
-           }
-        log.info("Ingredients details return from PS");
+            log.error("Ingredients details is empty");
+        }
         return Mono.just(ingredientsResponse);
+
     }
 
     public static Mono<SearchRecipesResponse> validateGetFoodRecipeResponseResponse(SearchRecipesResponse foodRecipeDetails) {

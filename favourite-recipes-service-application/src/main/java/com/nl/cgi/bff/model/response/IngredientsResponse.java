@@ -15,5 +15,6 @@ public class IngredientsResponse {
     String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String errorCode;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Ingredients ingredients;
 }
