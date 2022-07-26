@@ -58,6 +58,8 @@ public class ExceptionUtil {
     public static Mono<IngredientsResponse> validateIngredientsResponse(IngredientsResponse ingredientsResponse) {
         if (ingredientsResponse == null) {
             log.error("Ingredients details is empty");
+            ingredientsResponse.setMessage("Ingredients details is empty");
+            ingredientsResponse.setErrorCode(ErrorDetail.DATA_DETAILS_NOT_FOUND.getErrorCode());
             return Mono.just(ingredientsResponse);
            }
         log.info("Ingredients details return from PS");

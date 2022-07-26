@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DishSearchRequest implements Serializable {
+public class RecipesSearchRequest implements Serializable {
 
 
     @JsonProperty(value = "quantity")
