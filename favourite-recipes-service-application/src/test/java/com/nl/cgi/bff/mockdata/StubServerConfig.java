@@ -22,40 +22,16 @@ import static reactor.netty.http.client.HttpClient.create;
 public class StubServerConfig {
 
     public static final ExceptionResponse PS_BAD_REQUEST = new ExceptionResponse("AS400", "Bad request");
-    public static final ExceptionResponse PS_SERVER_ERROR = new ExceptionResponse("AS500", "Could not connect to Authorization Service");
+    public static final ExceptionResponse PS_SERVER_ERROR = new ExceptionResponse("AS500", "Could not connect to Persistence Service");
 
 
     public static MockWebServer mockServer;
     public static ObjectMapper objectMapper = new ObjectMapper();
     public WebClient webClient;
 
-    /**
-     * Function will give proper output only
-     * when service bean initialized inside @BeforeEach.
-     * If not, resist using this assertion
-     */
-    public static void assertCalledAtLeastOnce() {
-        assertEquals(1, mockServer.getRequestCount());
-    }
 
-    /**
-     * Function will give proper output only
-     * when service bean initialized inside @BeforeEach.
-     * If not, resist using this assertion
-     */
-    public static void assertCalledAtLeast(int times) {
-        assertEquals(times, mockServer.getRequestCount());
-    }
 
-    /**
-     * Function will give proper output only
-     * when service bean initialized inside @BeforeEach.
-     * If not, resist using this assertion
-     */
-    public static void assertRequestContains(List<String> matches) throws InterruptedException {
-        String request = Objects.requireNonNull(mockServer.takeRequest(1, TimeUnit.SECONDS)).getBody().readUtf8();
-        matches.forEach(string -> assertTrue(request.contains(string)));
-    }
+
 
     /**
      * Method must be called inside @BeforeEach / init method
@@ -93,7 +69,7 @@ public class StubServerConfig {
     public static class ResponseBuilder<T> {
         public MockResponse mockResponseFor(T responseFormat) throws JsonProcessingException {
             return new MockResponse().setResponseCode(200)
-                    .setBody(objectMapper.writeValueAsString(responseFormat))
+                    .setBody(responseFormat.toString())
                     .addHeader("Content-Type", "application/json");
         }
     }

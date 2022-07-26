@@ -2,8 +2,8 @@ package com.nl.cgi.bff.client;
 
 import com.nl.cgi.bff.exception.ExceptionUtil;
 import com.nl.cgi.bff.exception.ServiceException;
-import com.nl.cgi.bff.model.request.RecipesRequest;
 import com.nl.cgi.bff.model.request.IngredientsRequest;
+import com.nl.cgi.bff.model.request.RecipesRequest;
 import com.nl.cgi.bff.model.response.IngredientsResponse;
 import com.nl.cgi.bff.model.response.RecipesResponse;
 import com.nl.cgi.bff.model.response.SearchRecipesResponse;
@@ -35,7 +35,7 @@ public class PersistenceServiceClient {
                 .uri(uriBuilder -> uriBuilder.path(requestUrl).queryParam("id", id).build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get dishes details call")))
+                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get Recipes details call")))
                 .bodyToMono(RecipesResponse.class)
                 .flatMap(recipesResponse -> ExceptionUtil.validateRecipesResponse(recipesResponse, "Recipes details is empty"))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
@@ -44,7 +44,7 @@ public class PersistenceServiceClient {
 
     /**
      * @param recipesRequest request
-     * @param requestUrl ps url
+     * @param requestUrl save url
      * @return recipes response
      */
     public RecipesResponse saveRecipesDetails(RecipesRequest recipesRequest, String requestUrl) {
@@ -63,10 +63,10 @@ public class PersistenceServiceClient {
 
     /**
      *
-     * @param id
-     * @param recipesRequest
-     * @param requestUrl
-     * @return
+     * @param id recipes Id
+     * @param recipesRequest update
+     * @param requestUrl of update the recipes
+     * @return update of recipe
      */
     public RecipesResponse updateRecipesDetails(long id, RecipesRequest recipesRequest, String requestUrl) {
         return persistenceWebClient
@@ -84,9 +84,9 @@ public class PersistenceServiceClient {
 
     /**
      *
-     * @param id
-     * @param requestUrl
-     * @return
+     * @param id recipes Id
+     * @param requestUrl delete recipe
+     * @return true if deleted
      */
     public Boolean deleteRecipeDetails(Long id, String requestUrl) {
         return persistenceWebClient
@@ -103,8 +103,8 @@ public class PersistenceServiceClient {
 
 
     /**
-     * @param requestUrl
-     * @return
+     * @param requestUrl get
+     * @return details of ingredients
      */
     public IngredientsResponse getIngredientsDetails(final long id, final String requestUrl) {
         return persistenceWebClient
@@ -120,9 +120,9 @@ public class PersistenceServiceClient {
     }
 
     /**
-     * @param ingredientsRequest
-     * @param requestUrl
-     * @return
+     * @param ingredientsRequest save
+     * @param requestUrl of save
+     * @return saved ingredients
      */
     public IngredientsResponse saveIngredientsDetails(IngredientsRequest ingredientsRequest, String requestUrl) {
         return persistenceWebClient
@@ -139,9 +139,9 @@ public class PersistenceServiceClient {
     }
 
     /**
-     * @param ingredientsRequest
-     * @param requestUrl
-     * @return
+     * @param ingredientsRequest request
+     * @param requestUrl update
+     * @return update of ingredients
      */
     public IngredientsResponse updateIngredientsDetails(final long id, IngredientsRequest ingredientsRequest, String requestUrl) {
         return persistenceWebClient
@@ -161,11 +161,11 @@ public class PersistenceServiceClient {
 
 
     /**
-     * @param category
-     * @param quantity
-     * @param instructions
-     * @param requestUrl
-     * @return
+     * @param category veg or non-veg
+     * @param quantity number of person serve
+     * @param instructions cook
+     * @param requestUrl search
+     * @return details of ingredients
      */
     public SearchRecipesResponse searchFoodRecipesDetails(String category, long quantity, String instructions, String requestUrl) {
         return persistenceWebClient
@@ -186,9 +186,9 @@ public class PersistenceServiceClient {
 
     /**
      *
-     * @param id
-     * @param requestUrl
-     * @return
+     * @param id recipesod
+     * @param requestUrl delete
+     * @return boolean
      */
 
     public Boolean deleteFoodRecipesDetails(Long id, String requestUrl) {
