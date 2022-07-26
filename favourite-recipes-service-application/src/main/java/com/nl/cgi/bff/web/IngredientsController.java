@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
-import java.util.List;
 
 
 @RestController
@@ -30,7 +28,7 @@ public class IngredientsController {
 
     @GetMapping
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieve ingredients details", response = List.class),
+            @ApiResponse(code = 200, message = "Successfully retrieve ingredients details", response = IngredientsResponse.class),
             @ApiResponse(code = 500, message = "Internal server error", response = ExceptionUtil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = ExceptionUtil.class)
     })
@@ -43,7 +41,7 @@ public class IngredientsController {
 
     @PostMapping
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "save ingredients details", response = Boolean.class),
+            @ApiResponse(code = 200, message = "save ingredients details", response = IngredientsResponse.class),
             @ApiResponse(code = 500, message = "Internal server error", response = ExceptionUtil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = ExceptionUtil.class)
     })
@@ -55,7 +53,7 @@ public class IngredientsController {
 
     @PutMapping("{id}")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "update ingredients details", response = Boolean.class),
+            @ApiResponse(code = 200, message = "update ingredients details", response = IngredientsResponse.class),
             @ApiResponse(code = 500, message = "Internal server error", response = ExceptionUtil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = ExceptionUtil.class)
     })

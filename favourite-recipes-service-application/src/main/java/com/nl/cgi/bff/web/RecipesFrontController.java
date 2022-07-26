@@ -30,23 +30,23 @@ public class RecipesFrontController {
 
     @GetMapping
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieve dish details", response = List.class),
+            @ApiResponse(code = 200, message = "Successfully retrieve recipes details", response = RecipesResponse.class),
             @ApiResponse(code = 500, message = "Internal server error", response = ExceptionUtil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = ExceptionUtil.class)
     })
-    @ApiOperation(notes = "Gets the dish details", produces = "application/json", value = "Gets the Food dish details")
+    @ApiOperation(notes = "Gets the dish details", produces = "application/json", value = "Get the recipe details")
     public ResponseEntity<RecipesResponse> getDishesDetails(final @Valid @RequestParam("id") long id) {
-        log.info("Inside the get dish details");
+        log.info("Inside the get recipes details {}" , id);
         return ResponseEntity.ok(recipesFrontService.getRecipesDetails(id));
     }
 
     @PostMapping
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully saved dishes", response = Boolean.class),
+            @ApiResponse(code = 200, message = "Successfully saved dishes", response = RecipesResponse.class),
             @ApiResponse(code = 500, message = "Internal server error", response = ExceptionUtil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = ExceptionUtil.class)
     })
-    @ApiOperation(notes = "save the Recipes details", produces = "application/json", value = "save the dishes details")
+    @ApiOperation(notes = "save the Recipes details", produces = "application/json", value = "save the recipe details")
     public ResponseEntity<RecipesResponse> saveDishesDetails(@Valid @RequestBody RecipesRequest recipesRequest) {
         log.info("Inside save dish method call");
         return ResponseEntity.ok(recipesFrontService.saveRecipesDetails(recipesRequest));
@@ -54,11 +54,11 @@ public class RecipesFrontController {
 
     @PutMapping("/{id}/ingredients")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated dishes", response = Boolean.class),
+            @ApiResponse(code = 200, message = "Successfully updated dishes", response = RecipesResponse.class),
             @ApiResponse(code = 500, message = "Internal server error", response = ExceptionUtil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = ExceptionUtil.class)
     })
-    @ApiOperation(notes = "save the Recipes details", produces = "application/json", value = "save the dishes details")
+    @ApiOperation(notes = "save the Recipes details", produces = "application/json", value = "update the recipe details")
     public ResponseEntity<RecipesResponse> updateDishesDetails(@PathVariable("id") long id, @Valid @RequestBody RecipesRequest recipesRequest) {
         log.info("Inside save dish method call");
         return ResponseEntity.ok(recipesFrontService.updateRecipesDetails(id, recipesRequest));
@@ -80,7 +80,7 @@ public class RecipesFrontController {
 
     @GetMapping("/search")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully filter food recipes details", response = List.class),
+            @ApiResponse(code = 200, message = "Successfully filter food recipes details", response = SearchRecipesResponse.class),
             @ApiResponse(code = 500, message = "Internal server error", response = ExceptionUtil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = ExceptionUtil.class)
     })

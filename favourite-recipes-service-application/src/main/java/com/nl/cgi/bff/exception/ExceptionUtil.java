@@ -1,6 +1,8 @@
 package com.nl.cgi.bff.exception;
 
-import com.nl.cgi.bff.model.response.*;
+import com.nl.cgi.bff.model.response.IngredientsResponse;
+import com.nl.cgi.bff.model.response.RecipesResponse;
+import com.nl.cgi.bff.model.response.SearchRecipesResponse;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,38 +37,37 @@ public class ExceptionUtil {
         return Mono.error(exception);
     }
 
-    public static Mono<Boolean> validateResponse(boolean response , String message) {
+    public static Mono<Boolean> validateResponse(boolean response, String message) {
         if (!response) {
             log.info(message);
-           // return Mono.error(new ServiceException(ErrorDetail.INTERNAL_SERVER_ERROR, "Details details is not saved"));
             return Mono.just(false);
         }
         log.info("Details updated/Added Successfully");
         return Mono.just(true);
     }
+
     public static Mono<RecipesResponse> validateRecipesResponse(RecipesResponse recipesResponse) {
-       if (recipesResponse==null) {
-           log.error("No recipes returned from persistence service");
-           return Mono.just(recipesResponse);
+        if (recipesResponse == null) {
+            log.error("No recipes returned from persistence service");
+            return Mono.just(recipesResponse);
         }
         log.info("Recipes details return from PS");
         return Mono.just(recipesResponse);
     }
 
     public static Mono<IngredientsResponse> validateIngredientsResponse(IngredientsResponse ingredientsResponse) {
-        if (ingredientsResponse==null) {
+        if (ingredientsResponse == null) {
             log.error("Ingredients details is empty");
-            return Mono.error(new ServiceException(ErrorDetail.CLIENT_DETAILS_NOT_FOUND, "No Ingredients returned from persistence service"));
-        }
+            return Mono.just(ingredientsResponse);
+           }
         log.info("Ingredients details return from PS");
         return Mono.just(ingredientsResponse);
     }
 
     public static Mono<SearchRecipesResponse> validateGetFoodRecipeResponseResponse(SearchRecipesResponse foodRecipeDetails) {
-        if (foodRecipeDetails==null) {
+        if (foodRecipeDetails == null) {
             log.error("Ingredients details is empty");
-            //return Mono.error(new ServiceException(ErrorDetail.CLIENT_DETAILS_NOT_FOUND, "No Ingredients returned from persistence service"));
-             return Mono.just(foodRecipeDetails);
+            return Mono.just(foodRecipeDetails);
         }
         log.info("Ingredients details return from PS");
         return Mono.just(foodRecipeDetails);

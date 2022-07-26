@@ -94,7 +94,7 @@ public class PersistenceServiceClient {
                 .uri(uriBuilder -> uriBuilder.path(requestUrl).queryParam("id", id).build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get recipes details call")))
+                .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during delete recipes details call")))
                 .bodyToMono(Boolean.class)
                 .flatMap(response -> ExceptionUtil.validateResponse(response, "dish details is not deleted"))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
