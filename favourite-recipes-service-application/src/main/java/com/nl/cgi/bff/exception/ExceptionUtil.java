@@ -46,13 +46,13 @@ public class ExceptionUtil {
         return Mono.just(true);
     }
 
-    public static Mono<RecipesResponse> validateRecipesResponse(RecipesResponse recipesResponse) {
+    public static Mono<RecipesResponse> validateRecipesResponse(RecipesResponse recipesResponse, String message) {
         if (recipesResponse != null && recipesResponse.getRecipes()!=null) {
             log.info("Recipes details return from PS");
         } else {
-            recipesResponse.setMessage("Recipes details is empty");
+            recipesResponse.setMessage(message);
             recipesResponse.setErrorCode(ErrorDetail.DATA_DETAILS_NOT_FOUND.getErrorCode());
-            log.error("No recipes returned from persistence service");
+            log.error(message);
         }
         return Mono.just(recipesResponse);
     }

@@ -37,7 +37,7 @@ public class PersistenceServiceClient {
                 .retrieve()
                 .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during get dishes details call")))
                 .bodyToMono(RecipesResponse.class)
-                .flatMap(recipesResponse -> ExceptionUtil.validateRecipesResponse(recipesResponse))
+                .flatMap(recipesResponse -> ExceptionUtil.validateRecipesResponse(recipesResponse, "Recipes details is empty"))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
                 .block();
     }
@@ -56,7 +56,7 @@ public class PersistenceServiceClient {
                 .retrieve()
                 .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during save dish details call")))
                 .bodyToMono(RecipesResponse.class)
-                .flatMap(response -> ExceptionUtil.validateRecipesResponse(response))
+                .flatMap(response -> ExceptionUtil.validateRecipesResponse(response , "Invalid Ingredients Details"))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
                 .block();
     }
@@ -77,7 +77,7 @@ public class PersistenceServiceClient {
                 .retrieve()
                 .onStatus(HttpStatus::isError, e -> ExceptionUtil.handleErrorResponse(e, new ServiceException("Exception occurred during save dish details call")))
                 .bodyToMono(RecipesResponse.class)
-                .flatMap(response -> ExceptionUtil.validateRecipesResponse(response))
+                .flatMap(response -> ExceptionUtil.validateRecipesResponse(response , "Invalid input request Details"))
                 .doOnError(ExceptionUtil::handleGenericWebClientException)
                 .block();
     }
