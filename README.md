@@ -19,7 +19,7 @@ Navigate to the project, and build App
 6) The app will start running at http://localhost:8080
 7) Swagger url http://localhost:8080/swagger-ui/
 
-8) Clone favourite-recipes-frontend-service
+8) Clone favourite-recipes-persistence-service
 9) mvn clean install (Build and run the app using maven)
 10) run the app (mvn spring-boot:run) or java -jar jarName.jar
 11) http://localhost:7001/h2-ui/
